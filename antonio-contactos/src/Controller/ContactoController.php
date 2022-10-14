@@ -7,6 +7,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ContactoController extends AbstractController
 {
@@ -19,6 +22,26 @@ class ContactoController extends AbstractController
         9 => ["nombre" => "Nora Jover", "telefono" => "54565859", "email" => "norajover@ieselcaminas.org"]
 
     ]; 
+    /**
+     * @Route("/contacto/nuevo", name="nuevo_contacto")
+     */
+    public function nuevo() {
+        $contacto = new Contacto();
+
+        $formulario = $this->createFormBuilder($contacto)
+            ->add('nombre', TextType::class)
+            ->add('telefono', TextType::class)
+            ->add('email', EmailType::class, array('label' => 'Correo electrónico'))
+            ->add('provincia', EntityType::class, array(
+                'class' => Provincia::class,
+                'choice_label' => 'nombre',))
+            ->add('save', SubmitType::class, array('label' => 'Enviar'))
+            ->getForm();
+
+            return $this->render('nuevo.html.twig', array(
+                'formulario' => $formulario->createView()
+            ));
+    }
     /**
      * @Route("/contacto/insertarConProvincia", name="insertar_con_provincia_contacto")
      */
